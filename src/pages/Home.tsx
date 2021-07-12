@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 
 import { Header } from '../components/Header';
 import { Task, TasksList } from '../components/TasksList';
@@ -12,19 +12,35 @@ export function Home() {
 
   function handleAddTask(newTaskTitle: string) {
 
+    
     const data = {
       id: new Date().getTime(),
       title: newTaskTitle,
       done: false
     }
-      
-    setTasks(oldState => [...oldState, data]);
+
+    const updatedTasks = tasks.map(task => ({...task}));
+    const foundItem = updatedTasks.find(item => item.title === newTaskTitle);
+
+    console.log(foundItem?.title);
+
+    if(foundItem?.title === data.title) {
+      Alert.alert(
+        "Task já cadastrada",
+        "Você não pode cadastrar uma task com o mesmo nome.",
+        [
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+    } else {
+      setTasks(oldState => [...oldState, data]);
+    }    
 
   }
 
   function handleToggleTaskDone(id: number) {
     const updatedTasks = tasks.map(task => ({...task}));
-
     const foundItem = updatedTasks.find(item => item.id === id);
 
     if(!foundItem){
@@ -39,9 +55,21 @@ export function Home() {
 
   function handleRemoveTask(id: number) {
 
-    setTasks(oldState => oldState.filter(
+    Alert.alert(
+      "Task já cadastrada",
+      "Você não pode cadastrar uma task com o mesmo nome.",
+      [
+        { text: "SIM", onPress: () => setTasks(oldState => oldState.filter(
+          tasks => tasks.id !== id
+        )) },
+        { text: "NÃO", onPress: () => null }
+      ],
+      { cancelable: false }
+    );
+
+   /* setTasks(oldState => oldState.filter(
       tasks => tasks.id !== id
-    ));
+    ));*/
     
   }
 
